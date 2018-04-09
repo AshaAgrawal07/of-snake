@@ -21,6 +21,7 @@ private:
 	GameState current_state_ = IN_PROGRESS; // The current state of the game, used to determine possible actions
 	Snake game_snake_; // The object that represents the user controlled snake
 	SnakeFood game_food_; // The object that represents the food pellet the user is attempting to eat with the snake
+	std::vector<int> records; //the vector that will update when scores are added (will contain top-10)
 
 	bool should_update_ = true;     // A flag boolean used in the update() function. Due to the frame dependent animation we've
 									// written, and the relatively low framerate, a bug exists where users can prefire direction 
@@ -48,5 +49,11 @@ public:
 	// Event driven functions, called on appropriate user action
 	void keyPressed(int key);
 	void windowResized(int w, int h);
+
+	//outputs the current score as well as the top 10
+	void score();
+
+	//outputs the top 10 scores
+	string top_ten();
 };
 } // namespace snakelinkedlist

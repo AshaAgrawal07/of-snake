@@ -1,5 +1,7 @@
 #include "ofApp.h"
 #include <iostream>
+#include <algorithm>
+#include <vector>
 
 using namespace snakelinkedlist;
 
@@ -53,6 +55,8 @@ void snakeGame::draw(){
 		drawGamePaused();
 	}
 	else if(current_state_ == FINISHED) {
+		//add current score to top-10 vector
+		records.push_back(game_snake_.getFoodEaten());
 		drawGameOver();
 	}
 	drawFood();
@@ -80,9 +84,17 @@ void snakeGame::keyPressed(int key){
 
 	int upper_key = toupper(key); // Standardize on upper case
 
-	if (upper_key == 'P' && current_state_ != FINISHED) {
+	if ((upper_key == 'P' || upper_key == 'H') && current_state_ != FINISHED) {
 		// Pause or unpause
-		current_state_ = (current_state_ == IN_PROGRESS) ? PAUSED : IN_PROGRESS;
+		if (upper_key == 'P') {
+			current_state_ = (current_state_ == IN_PROGRESS) ? PAUSED : IN_PROGRESS;
+		}
+		else if (upper_key == 'H') {
+			//pause the game
+			current_state_ = PAUSED;
+			//output the top 10 scores
+
+		}
 	}
 	else if (current_state_ == IN_PROGRESS)
 	{
@@ -150,6 +162,24 @@ void snakeGame::drawGameOver() {
 	ofSetColor(0, 0, 0);
 	ofDrawBitmapString(lose_message, ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
 }
+
+void snakeGame::score() {
+	string current_score = std::to_string(game_snake_.getFoodEaten());
+	string score_message = "CURRENT SCORE: " + current_score + "\nTOP 10: " + top_ten();
+	ofSetColor(0, 0, 0);
+	ofDrawBitmapString(score_message, ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
+}
+
+string snakelinkedlist::snakeGame::top_ten()
+{
+	string output = "";
+	sort(begin(records), end(records), std::greater<int>());
+	for (int i = 0; i < 10; i++) {
+		output += (i + ". " + records[i]);
+	}
+	return output;
+}
+
 
 void snakeGame::drawGamePaused() {
 	string pause_message = "P to Unpause!";
