@@ -93,7 +93,7 @@ void snakeGame::keyPressed(int key){
 			//pause the game
 			current_state_ = PAUSED;
 			//output the top 10 scores
-
+			top_ten();
 		}
 	}
 	else if (current_state_ == IN_PROGRESS)
@@ -172,10 +172,10 @@ void snakeGame::score() {
 
 string snakelinkedlist::snakeGame::top_ten()
 {
-	string output = "";
+	string output = "TOP 10: \n";
 	sort(begin(records), end(records), std::greater<int>());
 	for (int i = 0; i < 10; i++) {
-		output += (i + ". " + records[i]);
+		output += (i + ". " + records[i] );
 	}
 	return output;
 }

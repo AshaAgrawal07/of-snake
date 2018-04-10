@@ -15,6 +15,7 @@ namespace snakelinkedlist {
 	}
 
 	void LinkedList::push_back(SnakeBodySegment value) {
+		ListNode *add_node = new ListNode(value);
 		if (!head_) {
 			push_front(value);
 		}
@@ -23,8 +24,7 @@ namespace snakelinkedlist {
 			while (tail->next_) {
 				tail = tail->next_;
 			}
-			ListNode *new_node = new ListNode(value);
-			tail->next_ = new_node;
+			tail->next_ = add_node;
 			length++;
 		}
 	}
@@ -93,7 +93,7 @@ namespace snakelinkedlist {
 		length = 0;
 	}
 
-	//ACCESSORS
+    //ACCESSORS
 
 	SnakeBodySegment LinkedList::front() const {
 		if (size() == 0) {
@@ -154,42 +154,55 @@ namespace snakelinkedlist {
 
 
 	bool LinkedList::operator==(const LinkedList &rhs) const {
-		ListNode *current = rhs.head_->next_;
+		if (this->size() != rhs.size()) {
+			return false;
+		}
+		ListNode* curr = this->head_;
+		ListNode* current = rhs.head_;
 		while (current != nullptr) {
-			if (rhs.head_ != current) {
-				delete current;
+			if (curr->data_ != current->data_) {
 				return false;
 			}
 			current = current->next_;
+			curr = curr->next_;
 		}
 		return true;
 	}
 
 	bool operator!=(const LinkedList &lhs, const LinkedList &rhs) {
-		if (rhs == lhs) {
-			return false;
+		if (lhs.size() != rhs.size()) {
+			return true;
+		}
+		ListNode* curr = lhs.head_;
+		ListNode* current = rhs.head_;
+		while (current != NULL && curr != NULL) {
+			if (curr->data_ == current->data_) {
+				return false;
+			}
+			current = current->next_;
+			curr = curr->next_;
 		}
 		return true;
 	}
 
-	//DEFAULT CONSTRUCTOR
-	LinkedList::LinkedList() : head_(NULL), length(0) {};
 
-	//INITALIZE FROM VECTOR
-	LinkedList::LinkedList(const std::vector<SnakeBodySegment> &values) : LinkedList() {
-		if (values.size() > 0) {
-			for (int i = 0; i < values.size(); i++) {
-				push_back(values.at(i));
-			}
-		}
-	}
+    //DEFAULT CONSTRUCTOR
+    LinkedList::LinkedList(): head_(NULL), length(0){};
 
-	//BIG 5
-	//Delete LinkedList
-	LinkedList::~LinkedList() {
-		clear();
-		head_ = nullptr;
-	}
+    //INITALIZE FROM VECTOR
+    LinkedList::LinkedList(const std::vector<SnakeBodySegment> &values) : LinkedList() {
+        if (values.size() > 0){
+            for (int i = 0; i < values.size(); i++) {
+                push_back(values.at(i));
+            }
+        }
+    }
+
+    //BIG 5
+    //Delete LinkedList
+    LinkedList::~LinkedList() {
+        clear();
+    }
 
 	//Deep copy: used this link for inspiration:  https://stackoverflow.com/questions/40320856/linked-list-deep-copy-constructor
 	LinkedList::LinkedList(const LinkedList &source) : LinkedList() {
@@ -208,13 +221,22 @@ namespace snakelinkedlist {
 		else {
 			head_ = nullptr;
 		}
+		this->length = source.length;
 	}
 
 	//Move constructor
 	LinkedList::LinkedList(LinkedList &&source) noexcept : LinkedList() {
 		length = source.length;
 		head_ = source.head_;
-		head_ = nullptr;
+		ListNode *current = head_;
+		ListNode *original = source.head_;
+
+		while (original->next_) {
+			original = original->next_;
+			current->next_ = original;
+			current = current->next_;
+		}
+
 		source.length = 0;
 	}
 
