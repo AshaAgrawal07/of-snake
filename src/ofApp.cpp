@@ -1,26 +1,27 @@
 #include "ofApp.h"
 #include <iostream>
-#include <algorithm>
 #include <vector>
 
 using namespace snakelinkedlist;
 
 // Setup method
-void snakeGame::setup(){
+void snakeGame::setup() {
 	ofSetWindowTitle("Snake126");
 
 	srand(static_cast<unsigned>(time(0))); // Seed random with current time
+
 	soundPlayer.load("mkr.mp3");
 	soundPlayer.play();
+	soundPlayer.setVolume(.2f);
 }
 
-/* 
+/*
 Update function called before every draw
 If the function should update when it is called it will:
 1. Check to see if the game is in progress, if it is paused or over it should not update.
 2. Check to see if the current head of the snake intersects the food pellet. If so:
-    * The snake should grow by length 1 in its current direction
-    * The food should be moved to a new random location
+* The snake should grow by length 1 in its current direction
+* The food should be moved to a new random location
 3. Update the snake in the current direction it is moving
 4. Check to see if the snakes new position has resulted in its death and the end of the game
 */
@@ -36,7 +37,7 @@ void snakeGame::update() {
 				game_food_.rebase();
 			}
 			game_snake_.update();
-			
+
 			if (game_snake_.isDead()) {
 				current_state_ = FINISHED;
 			}
@@ -52,11 +53,11 @@ Draws the current state of the game with the following logic
 2. If the game is finished draw the game over screen and final score
 3. Draw the current position of the food and of the snake
 */
-void snakeGame::draw(){
-	if(current_state_ == PAUSED) {
+void snakeGame::draw() {
+	if (current_state_ == PAUSED) {
 		drawGamePaused();
 	}
-	else if(current_state_ == FINISHED) {
+	else if (current_state_ == FINISHED) {
 		//add current score to top-10 vector
 		records.push_back(game_snake_.getFoodEaten());
 		drawGameOver();
@@ -65,20 +66,19 @@ void snakeGame::draw(){
 	drawSnake();
 }
 
-/* 
+/*
 Function that handles actions based on user key presses
 1. if key == F12, toggle fullscreen
 2. if key == p and game is not over, toggle pause
 3. if game is in progress handle WASD action
 4. if key == r and game is over reset it
-
 WASD logic:
 Let dir be the direction that corresponds to a key
 if current direction is not dir (Prevents key spamming to rapidly update the snake)
- and current_direction is not opposite of dir (Prevents the snake turning and eating itself)
- Update direction of snake and force a game update (see ofApp.h for why)
+and current_direction is not opposite of dir (Prevents the snake turning and eating itself)
+Update direction of snake and force a game update (see ofApp.h for why)
 */
-void snakeGame::keyPressed(int key){
+void snakeGame::keyPressed(int key) {
 	if (key == OF_KEY_F12) {
 		ofToggleFullscreen();
 		return;
@@ -95,7 +95,7 @@ void snakeGame::keyPressed(int key){
 			//pause the game
 			current_state_ = PAUSED;
 			//output the top 10 scores
-			top_ten();
+			score();			
 		}
 	}
 	else if (current_state_ == IN_PROGRESS)
@@ -125,7 +125,7 @@ void snakeGame::keyPressed(int key){
 		}
 	}
 	else if (upper_key == 'R' && current_state_ == FINISHED) {
-			reset();
+		reset();
 	}
 }
 
@@ -137,7 +137,7 @@ void snakeGame::reset() {
 	soundPlayer.play();
 }
 
-void snakeGame::windowResized(int w, int h){
+void snakeGame::windowResized(int w, int h) {
 	game_food_.resize(w, h);
 	game_snake_.resize(w, h);
 }
@@ -162,26 +162,39 @@ void snakeGame::drawSnake() {
 
 void snakeGame::drawGameOver() {
 	string total_food = std::to_string(game_snake_.getFoodEaten());
-	string lose_message = "You Lost! Final Score: " + total_food;
+	string lose_message = "You Lost! Final Score: " + total_food + " " + top_ten();
 	ofSetColor(0, 0, 0);
-	ofDrawBitmapString(lose_message, ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
+	ofDrawBitmapString(lose_message, ofGetWindowWidth() / 4, ofGetWindowHeight() / 4);
+	top_ten();
 	soundPlayer.stop();
 }
 
 void snakeGame::score() {
 	string current_score = std::to_string(game_snake_.getFoodEaten());
-	string score_message = "CURRENT SCORE: " + current_score + "\nTOP 10: " + top_ten();
+	string score_message = "CURRENT SCORE: " + current_score + " " + top_ten();
 	ofSetColor(0, 0, 0);
-	ofDrawBitmapString(score_message, ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
+	ofDrawBitmapString(score_message, ofGetWindowWidth() / 4, ofGetWindowHeight() / 4);
 }
 
 string snakelinkedlist::snakeGame::top_ten()
 {
 	string output = "TOP 10: \n";
-	sort(begin(records), end(records), std::greater<int>());
+	sort(records.begin(), records.end(), std::greater<int>());
+	vector<int> top = records;	
+
+	int pos = 0;
 	for (int i = 0; i < 10; i++) {
-		output += (i + ". " + records[i] );
+		int max;
+		for (int j = 1; j < top.size(); j++) {
+			if (top[j] > max) {
+				max = top[j];
+				pos = j;
+			}
+		}
+		output += (i + ", " + top[pos]);
+		top.erase(top.begin() + pos);
 	}
+	records = top;
 	return output;
 }
 
