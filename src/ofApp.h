@@ -39,6 +39,7 @@ private:
 	void reset();
 
 public:
+	ofSoundPlayer soundPlayer;
 	// Function used for one time setup
 	void setup();
 

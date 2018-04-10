@@ -10,6 +10,8 @@ void snakeGame::setup(){
 	ofSetWindowTitle("Snake126");
 
 	srand(static_cast<unsigned>(time(0))); // Seed random with current time
+	soundPlayer.load("mkr.mp3");
+	soundPlayer.play();
 }
 
 /* 
@@ -131,6 +133,8 @@ void snakeGame::reset() {
 	game_snake_ = Snake();
 	game_food_.rebase();
 	current_state_ = IN_PROGRESS;
+	soundPlayer.load("mkr.mp3");
+	soundPlayer.play();
 }
 
 void snakeGame::windowResized(int w, int h){
@@ -161,6 +165,7 @@ void snakeGame::drawGameOver() {
 	string lose_message = "You Lost! Final Score: " + total_food;
 	ofSetColor(0, 0, 0);
 	ofDrawBitmapString(lose_message, ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
+	soundPlayer.stop();
 }
 
 void snakeGame::score() {
