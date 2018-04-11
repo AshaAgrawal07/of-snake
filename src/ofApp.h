@@ -15,10 +15,12 @@ enum GameState {
   PAUSED,
   FINISHED
 };
+
+//from:  https://www.quora.com/How-can-I-sort-numbers-in-descending-order-using-C++-STL
 //struct greater
 //{
 //	template<class T>
-//	bool operator()(T const &a, T const &b) const { return a < b; }
+//	bool operator()(T const &a, T const &b) const { return a > b; }
 //};
 
 class snakeGame : public ofBaseApp {

@@ -59,7 +59,13 @@ void snakeGame::draw() {
 	}
 	else if (current_state_ == FINISHED) {
 		//add current score to top-10 vector
-		records.push_back(game_snake_.getFoodEaten());
+		//this is causing an error where records pushes the value back infinitely, so commenting out for right now
+		//records.push_back(game_snake_.getFoodEaten());
+
+		//even after commenting out above, it seems like draw() is still being called even though it is in FINISHED mode,
+		//so drawGameOver() is called as well, so the current score keeps on getting pushed everytime, screwing up 
+		//the scores as a result
+
 		drawGameOver();
 	}
 	drawFood();
@@ -130,7 +136,7 @@ void snakeGame::keyPressed(int key) {
 }
 
 void snakeGame::reset() {
-	records.push_back(game_snake_.getFoodEaten());
+	//records.push_back(game_snake_.getFoodEaten());
 
 	game_snake_ = Snake();
 	game_food_.rebase();
@@ -182,15 +188,17 @@ void snakeGame::score() {
 
 void snakelinkedlist::snakeGame::top_ten()
 {
+	records.push_back(game_snake_.getFoodEaten());
 	string output = "TOP 10: \n";
 	sort(records.begin(), records.end(), std::greater<int>());
+	std::cout << records.size() << std::endl;
 
 	int upperbound = 10;
 	if (records.size() < 10) {
 		upperbound = records.size();
 	}
 	for (int i = 0; i < upperbound; i++) {
-		output += std::to_string(i) + ".  " + std::to_string(records.at(i)) + "\n";
+		output += std::to_string(i + 1) + ".  " + std::to_string(records.at(i)) + "\n";
 	}
 
 	ofSetColor(0, 0, 0);
