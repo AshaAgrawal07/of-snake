@@ -13,7 +13,8 @@ namespace snakelinkedlist {
 enum GameState {
   IN_PROGRESS = 0,
   PAUSED,
-  FINISHED
+  FINISHED,
+  TOP_TEN
 };
 
 //from:  https://www.quora.com/How-can-I-sort-numbers-in-descending-order-using-C++-STL

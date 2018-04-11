@@ -39,6 +39,7 @@ void snakeGame::update() {
 			game_snake_.update();
 
 			if (game_snake_.isDead()) {
+				records.push_back(game_snake_.getFoodEaten());
 				current_state_ = FINISHED;
 			}
 		}
@@ -54,20 +55,15 @@ Draws the current state of the game with the following logic
 3. Draw the current position of the food and of the snake
 */
 void snakeGame::draw() {
-	if (current_state_ == PAUSED) {
+	if (current_state_ == TOP_TEN) {
+		top_ten();
+}
+else if (current_state_ == PAUSED) {
 		drawGamePaused();
 	}
 	else if (current_state_ == FINISHED) {
-		//add current score to top-10 vector
-		//this is causing an error where records pushes the value back infinitely, so commenting out for right now
-		//records.push_back(game_snake_.getFoodEaten());
-
-		//even after commenting out above, it seems like draw() is still being called even though it is in FINISHED mode,
-		//so drawGameOver() is called as well, so the current score keeps on getting pushed everytime, screwing up 
-		//the scores as a result
-
 		drawGameOver();
-	}
+	} 
 	drawFood();
 	drawSnake();
 }
@@ -92,17 +88,14 @@ void snakeGame::keyPressed(int key) {
 
 	int upper_key = toupper(key); // Standardize on upper case
 
-	if ((upper_key == 'P' || upper_key == 'H') && current_state_ != FINISHED) {
+	if ((upper_key == 'P') && current_state_ != FINISHED) {
 		// Pause or unpause
 		if (upper_key == 'P') {
 			current_state_ = (current_state_ == IN_PROGRESS) ? PAUSED : IN_PROGRESS;
 		}
-		else if (upper_key == 'H') {
-			//pause the game
-			current_state_ = PAUSED;
-			//output the top 10 scores as well as current score
-			score();			
-		}
+	}
+	else if (upper_key == 'H' && current_state_ != FINISHED) {
+		current_state_ = (current_state_ == IN_PROGRESS) ? TOP_TEN : IN_PROGRESS;
 	}
 	else if (current_state_ == IN_PROGRESS)
 	{
@@ -136,7 +129,6 @@ void snakeGame::keyPressed(int key) {
 }
 
 void snakeGame::reset() {
-	//records.push_back(game_snake_.getFoodEaten());
 
 	game_snake_ = Snake();
 	game_food_.rebase();
@@ -188,7 +180,6 @@ void snakeGame::score() {
 
 void snakelinkedlist::snakeGame::top_ten()
 {
-	records.push_back(game_snake_.getFoodEaten());
 	string output = "TOP 10: \n";
 	sort(records.begin(), records.end(), std::greater<int>());
 	std::cout << records.size() << std::endl;
