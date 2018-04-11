@@ -15,11 +15,11 @@ enum GameState {
   PAUSED,
   FINISHED
 };
-struct greater
-{
-	template<class T>
-	bool operator()(T const &a, T const &b) const { return a > b; }
-};
+//struct greater
+//{
+//	template<class T>
+//	bool operator()(T const &a, T const &b) const { return a < b; }
+//};
 
 class snakeGame : public ofBaseApp {
 private:

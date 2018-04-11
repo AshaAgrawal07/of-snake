@@ -3,7 +3,7 @@
 #include <vector>
 
 using namespace snakelinkedlist;
-
+vector<int> records;
 // Setup method
 void snakeGame::setup() {
 	ofSetWindowTitle("Snake126");
@@ -94,8 +94,8 @@ void snakeGame::keyPressed(int key) {
 		else if (upper_key == 'H') {
 			//pause the game
 			current_state_ = PAUSED;
-			//output the top 10 scores
-			top_ten();			
+			//output the top 10 scores as well as current score
+			score();			
 		}
 	}
 	else if (current_state_ == IN_PROGRESS)
@@ -190,7 +190,7 @@ void snakelinkedlist::snakeGame::top_ten()
 		upperbound = records.size();
 	}
 	for (int i = 0; i < upperbound; i++) {
-		output += std::to_string(i) + ", " + std::to_string(records.at(i));
+		output += std::to_string(i) + ".  " + std::to_string(records.at(i)) + "\n";
 	}
 
 	ofSetColor(0, 0, 0);
