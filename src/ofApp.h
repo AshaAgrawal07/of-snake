@@ -42,9 +42,11 @@ private:
 	// Resets the game objects to their original state.
 	void reset();
 
-public:
 	vector<int> records; //the vector that will update when scores are added (will contain top-10)
 	ofSoundPlayer soundPlayer;
+
+public:
+	
 	// Function used for one time setup
 	void setup();
 
@@ -60,6 +62,6 @@ public:
 	void score();
 
 	//outputs the top 10 scores
-	string top_ten();
+	void top_ten();
 };
 } // namespace snakelinkedlist

@@ -95,7 +95,7 @@ void snakeGame::keyPressed(int key) {
 			//pause the game
 			current_state_ = PAUSED;
 			//output the top 10 scores
-			score();			
+			top_ten();			
 		}
 	}
 	else if (current_state_ == IN_PROGRESS)
@@ -130,9 +130,12 @@ void snakeGame::keyPressed(int key) {
 }
 
 void snakeGame::reset() {
+	records.push_back(game_snake_.getFoodEaten());
+
 	game_snake_ = Snake();
 	game_food_.rebase();
 	current_state_ = IN_PROGRESS;
+
 	soundPlayer.load("mkr.mp3");
 	soundPlayer.play();
 }
@@ -162,7 +165,7 @@ void snakeGame::drawSnake() {
 
 void snakeGame::drawGameOver() {
 	string total_food = std::to_string(game_snake_.getFoodEaten());
-	string lose_message = "You Lost! Final Score: " + total_food + " " + top_ten();
+	string lose_message = "You Lost! Final Score: " + total_food;
 	ofSetColor(0, 0, 0);
 	ofDrawBitmapString(lose_message, ofGetWindowWidth() / 4, ofGetWindowHeight() / 4);
 	top_ten();
@@ -171,32 +174,30 @@ void snakeGame::drawGameOver() {
 
 void snakeGame::score() {
 	string current_score = std::to_string(game_snake_.getFoodEaten());
-	string score_message = "CURRENT SCORE: " + current_score + " " + top_ten();
+	string score_message = "CURRENT SCORE: " + current_score;
 	ofSetColor(0, 0, 0);
 	ofDrawBitmapString(score_message, ofGetWindowWidth() / 4, ofGetWindowHeight() / 4);
+	top_ten();
 }
 
-string snakelinkedlist::snakeGame::top_ten()
+void snakelinkedlist::snakeGame::top_ten()
 {
 	string output = "TOP 10: \n";
 	sort(records.begin(), records.end(), std::greater<int>());
-	vector<int> top = records;	
 
-	int pos = 0;
-	for (int i = 0; i < 10; i++) {
-		int max;
-		for (int j = 1; j < top.size(); j++) {
-			if (top[j] > max) {
-				max = top[j];
-				pos = j;
-			}
-		}
-		output += (i + ", " + top[pos]);
-		top.erase(top.begin() + pos);
+	int upperbound = 10;
+	if (records.size() < 10) {
+		upperbound = records.size();
 	}
-	records = top;
-	return output;
+	for (int i = 0; i < upperbound; i++) {
+		output += std::to_string(i) + ", " + std::to_string(records.at(i));
+	}
+
+	ofSetColor(0, 0, 0);
+	ofDrawBitmapString(output, ofGetWindowWidth() / 4, ofGetWindowHeight() / 4);
 }
+	
+
 
 
 void snakeGame::drawGamePaused() {
